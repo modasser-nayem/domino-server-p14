@@ -1,0 +1,18 @@
+// user.prisma
+model User {
+  id    String @id @unique @default(uuid())
+  name  String
+  email String
+  password String
+  role UserRole @default(student)
+  profile_picture String
+  created_at DateTime @default(now())
+
+  @@map("users")
+}
+
+enum UserRole {
+    student
+    instructor
+    admin
+}
