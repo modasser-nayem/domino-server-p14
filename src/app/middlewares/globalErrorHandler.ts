@@ -5,6 +5,7 @@ import zodErrorHandler from "../errors/zodErrorHandler";
 
 import AppError from "../errors/AppError";
 import config from "../config";
+import { Prisma } from "@prisma/client";
 
 export const globalErrorHandler: ErrorRequestHandler = (
   err,
@@ -28,6 +29,26 @@ export const globalErrorHandler: ErrorRequestHandler = (
     message = "Unauthorized Access";
     error = null;
     stack = err.stack;
+  } else if (err instanceof Prisma.PrismaClientInitializationError) {
+    message = err.message;
+    stack = err.stack;
+    error = null;
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    message = err.message;
+    stack = err.stack;
+    error = null;
+  } else if (err instanceof Prisma.PrismaClientRustPanicError) {
+    message = err.message;
+    stack = err.stack;
+    error = null;
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    message = err.message;
+    stack = err.stack;
+    error = null;
+  } else if (err instanceof Prisma.PrismaClientValidationError) {
+    message = err.message;
+    stack = err.stack;
+    error = err;
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
