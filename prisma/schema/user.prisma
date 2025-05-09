@@ -9,6 +9,8 @@ model User {
   created_at DateTime @default(now())
 
   instructed_courses Course[] @relation(name: "instructed")
+  enrollments Enrollment[]
+  payments Payment[]
 
   @@map("users")
 }

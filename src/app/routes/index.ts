@@ -5,6 +5,7 @@ import categoryRoutes from "../modules/Category/category.routes";
 import courseRoutes from "../modules/Course/course.routes";
 import lessonRoutes from "../modules/Lesson/lesson.routes";
 import courseModuleRoutes from "../modules/CourseModule/module.routes";
+import enrollmentRoutes from "../modules/Enrollment/enrollment.routes";
 
 const routers = Router();
 const moduleRoutes: { path: string; route: Router }[] = [
@@ -31,6 +32,10 @@ const moduleRoutes: { path: string; route: Router }[] = [
   {
     path: "/courses/:courseId/lessons/:lessonId/modules",
     route: courseModuleRoutes,
+  },
+  {
+    path: "/enrollments",
+    route: enrollmentRoutes,
   },
 ];
 
