@@ -7,9 +7,6 @@ const createLesson = z.object({
   description: z
     .string({ required_error: "description is required" })
     .refine((v) => v !== "", { message: "description is required" }),
-  course_id: z
-    .string({ required_error: "course_id is required" })
-    .refine((v) => v !== "", { message: "course_id is required" }),
 });
 
 const updateLesson = z.object({
@@ -21,20 +18,10 @@ const updateLesson = z.object({
     .string()
     .refine((v) => v !== "", { message: "description is required" })
     .optional(),
-  course_id: z
-    .string({ required_error: "course_id is required" })
-    .refine((v) => v !== "", { message: "course_id is required" }),
   order: z.number().min(1).optional(),
-});
-
-const deleteLesson = z.object({
-  course_id: z
-    .string({ required_error: "course_id is required" })
-    .refine((v) => v !== "", { message: "course_id is required" }),
 });
 
 export const lessonSchemaValidation = {
   createLesson,
   updateLesson,
-  deleteLesson,
 };

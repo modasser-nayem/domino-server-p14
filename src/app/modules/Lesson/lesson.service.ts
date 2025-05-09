@@ -1,10 +1,6 @@
 import AppError from "../../errors/AppError";
 import { bindAllMethods } from "../../utils/bindmethod";
-import {
-  TCreateLesson,
-  TDeleteLesson,
-  TUpdateLesson,
-} from "./lesson.interface";
+import { TCreateLesson, TUpdateLesson } from "./lesson.interface";
 import { LessonRepository } from "./lesson.repository";
 
 export class LessonService {
@@ -19,40 +15,45 @@ export class LessonService {
 
   // Update Lesson
   public async updateLesson(payload: {
-    lesson_id: string;
+    lessonId: string;
+    courseId: string;
     data: TUpdateLesson;
   }) {
-    const existLesson = await LessonRepository.findLesson(payload.lesson_id);
+    const existLesson = await LessonRepository.findLessonById(payload.lessonId);
 
     if (!existLesson) {
       throw new AppError(400, "Invalid lesson_id");
     }
 
-    if (existLesson.course_id !== payload.data.course_id) {
+    if (existLesson.course_id !== payload.courseId) {
       throw new AppError(400, "This lesson not exist on that course");
     }
 
-    return await LessonRepository.updateLesson(payload);
+    // if just title change
+    if (payload.data.title && !payload.data.order) {
+      payload.data.title = `${existLesson.order}: ${payload.data.title}`;
+    }
+
+    return await LessonRepository.updateLesson({
+      lessonId: payload.lessonId,
+      data: payload.data,
+    });
   }
 
   // Delete Lesson
-  public async deleteLesson(payload: {
-    lesson_id: string;
-    data: TDeleteLesson;
-  }) {
-    const existLesson = await LessonRepository.findLesson(payload.lesson_id);
+  public async deleteLesson(payload: { courseId: string; lessonId: string }) {
+    const existLesson = await LessonRepository.findLessonById(payload.lessonId);
 
     if (!existLesson) {
       throw new AppError(400, "Invalid lesson_id");
     }
 
-    if (existLesson.course_id !== payload.data.course_id) {
+    if (existLesson.course_id !== payload.courseId) {
       throw new AppError(400, "This lesson not exist on that course");
     }
 
     return await LessonRepository.deleteLesson({
-      lesson_id: payload.lesson_id,
-      course_id: payload.data.course_id,
+      lessonId: payload.lessonId,
     });
   }
 }

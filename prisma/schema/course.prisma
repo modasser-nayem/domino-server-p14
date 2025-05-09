@@ -18,12 +18,11 @@ model Course {
     instructor User? @relation(fields: [instructor_id], references: [id], name:"instructed")
     price Int
     status CourseStatus @default(upcoming)
-    total_modules Int @default(0)
-    total_duration Int @default(0)
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
     lessons Lesson[]
+    modules Module[]
 
     @@map("courses")
 }
@@ -34,7 +33,6 @@ model Lesson {
     course Course @relation(fields: [course_id], references: [id])
     title String
     description String?
-    total_duration Int @default(0)
     order Int
 
     modules Module[]
@@ -42,18 +40,6 @@ model Lesson {
     @@map("lessons")
 }
 
-model Module {
-    id String @id @default(uuid())
-    lesson_id String
-    lesson Lesson @relation(fields: [lesson_id], references: [id])
-    title String
-    type ModuleType
-    url String
-    duration Int
-    order Int
-
-    @@map("modules")
-}
 
 
 // CourseStatus
@@ -61,12 +47,4 @@ enum CourseStatus {
     upcoming
     open
     closed
-}
-
-// ModuleType
-enum ModuleType {
-    text
-    video
-    quiz
-    assignment
 }

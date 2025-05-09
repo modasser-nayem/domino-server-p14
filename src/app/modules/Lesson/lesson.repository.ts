@@ -4,15 +4,24 @@ import { TCreateLesson, TUpdateLesson } from "./lesson.interface";
 export class LessonRepository {
   // create new lesson
   public static async createLesson(payload: { data: TCreateLesson }) {
-    const lessonCount = await prisma.lesson.count();
+    const lessonCount = await prisma.lesson.count({
+      where: { course_id: payload.data.course_id },
+    });
     payload.data.order = lessonCount + 1;
 
-    return await prisma.lesson.create({ data: payload.data });
+    return await prisma.lesson.create({
+      data: {
+        course_id: payload.data.course_id,
+        title: `${payload.data.order}: ${payload.data.title}`,
+        description: payload.data.description,
+        order: payload.data.order,
+      },
+    });
   }
 
   // update lesson
   public static async updateLesson(payload: {
-    lesson_id: string;
+    lessonId: string;
     data: TUpdateLesson;
   }) {
     const newData = {
@@ -22,44 +31,32 @@ export class LessonRepository {
     };
 
     return await prisma.lesson.update({
-      where: { id: payload.lesson_id },
+      where: { id: payload.lessonId },
       data: newData,
     });
   }
 
   // delete lesson
-  public static async deleteLesson(payload: {
-    lesson_id: string;
-    course_id: string;
-  }) {
-    // TODO: also delete related lesson, module everything relate
-    return { ...payload, message: "Delete Lesson" };
+  public static async deleteLesson(payload: { lessonId: string }) {
+    const result = await prisma.$transaction(async (t) => {
+      const deletedLesson = await t.lesson.delete({
+        where: { id: payload.lessonId },
+      });
+
+      await t.module.deleteMany({ where: { lesson_id: payload.lessonId } });
+
+      return deletedLesson;
+    });
+
+    return result;
   }
 
   // find lesson by id
-  public static async findLesson(id: string) {
+  public static async findLessonById(id: string) {
     return await prisma.lesson.findFirst({
       where: {
         id,
       },
     });
-  }
-
-  // is instructor access
-  public static async isInstructorCourseAccess(
-    course_id: string,
-    instructor_id: string,
-  ) {
-    const exist = await prisma.course.findFirst({
-      where: {
-        id: course_id,
-        instructor_id,
-      },
-      select: {
-        id: true,
-        instructor_id: true,
-      },
-    });
-    return exist ? true : false;
   }
 }

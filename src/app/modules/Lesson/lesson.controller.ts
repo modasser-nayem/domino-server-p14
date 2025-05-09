@@ -12,7 +12,9 @@ export class LessonController {
 
   // Create new lesson
   async createLesson(req: Request, res: Response) {
-    const result = await this.lessonService.createLesson({ data: req.body });
+    const result = await this.lessonService.createLesson({
+      data: { course_id: req.params.courseId, ...req.body },
+    });
 
     sendResponse(res, {
       statusCode: 201,
@@ -25,7 +27,8 @@ export class LessonController {
   // update lesson
   async updateLesson(req: Request, res: Response) {
     const result = await this.lessonService.updateLesson({
-      lesson_id: req.params.id,
+      courseId: req.params.courseId,
+      lessonId: req.params.lessonId,
       data: req.body,
     });
 
@@ -40,8 +43,8 @@ export class LessonController {
   // delete lesson
   async deleteLesson(req: Request, res: Response) {
     const result = await this.lessonService.deleteLesson({
-      lesson_id: req.params.id,
-      data: req.body,
+      courseId: req.params.courseId,
+      lessonId: req.params.lessonId,
     });
 
     sendResponse(res, {

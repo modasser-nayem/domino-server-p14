@@ -1,20 +1,22 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { LessonRepository } from "../modules/Lesson/lesson.repository";
+
 import AppError from "../errors/AppError";
+import { CourseRepository } from "../modules/Course/course.repository";
 
 export const instructorCourseAccess = () => {
   return asyncHandler(
     async (req: Request, _res: Response, next: NextFunction) => {
-      const course_id = req.body.course_id;
+      const courseId = req.params.courseId;
+      console.log(req.params);
 
-      if (!course_id) {
-        throw new AppError(401, "Please provide course_id in req.body");
+      if (!courseId) {
+        throw new AppError(401, "Please provide courseId in req.params");
       }
 
       if (
-        !(await LessonRepository.isInstructorCourseAccess(
-          course_id,
+        !(await CourseRepository.isInstructorCourseAccess(
+          courseId,
           req.user.id,
         ))
       ) {
