@@ -1,0 +1,16 @@
+model Payment {
+  id                        String   @id @default(uuid())
+  student_id                String
+  course_id                 String
+  stripe_session_id         String   @unique
+  stripe_payment_intent_id  String?
+  amount                    Int
+  currency                  String
+  status                    String
+  createdAt                 DateTime @default(now())
+
+  student   User   @relation(fields: [student_id], references: [id])
+  course Course @relation(fields: [course_id], references: [id])
+
+  @@map("payments")
+}

@@ -23,6 +23,8 @@ model Course {
 
     lessons Lesson[]
     modules Module[]
+    enrollments Enrollment[]
+    payments Payment[]
 
     @@map("courses")
 }
@@ -38,6 +40,18 @@ model Lesson {
     modules Module[]
 
     @@map("lessons")
+}
+
+
+model Enrollment {
+    id String @id @default(uuid())
+    course_id String
+    course Course @relation(fields: [course_id], references: [id])
+    student_id String?
+    student User? @relation(fields: [student_id], references: [id])
+    enrolled_at DateTime @default(now())
+
+    @@map("enrollments")
 }
 
 
