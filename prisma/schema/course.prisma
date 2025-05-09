@@ -1,6 +1,50 @@
 model Category {
-    id String @id @unique @default(uuid())
+    id String @id @default(uuid())
     name String
 
+    course Course[]
+
     @@map("categories")
+}
+
+model Course {
+    id String @id @default(uuid())
+    title String
+    thumbnail String
+    description String
+    category_id String
+    category Category @relation(fields: [category_id],references: [id])
+    instructor_id String?
+    instructor User? @relation(fields: [instructor_id], references: [id], name:"instructed")
+    price Int
+    status CourseStatus @default(upcoming)
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    lessons Lesson[]
+    modules Module[]
+
+    @@map("courses")
+}
+
+model Lesson {
+    id String @id @default(uuid())
+    course_id String
+    course Course @relation(fields: [course_id], references: [id])
+    title String
+    description String?
+    order Int
+
+    modules Module[]
+
+    @@map("lessons")
+}
+
+
+
+// CourseStatus
+enum CourseStatus {
+    upcoming
+    open
+    closed
 }

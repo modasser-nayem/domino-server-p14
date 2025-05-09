@@ -1,0 +1,12 @@
+model Module {
+    id String @id @default(uuid())
+    lesson_id String
+    lesson Lesson @relation(fields: [lesson_id], references: [id])
+    course_id String
+    course Course @relation(fields: [course_id], references: [id])    
+    title String
+    video_url String
+    order Int
+
+    @@map("modules")
+}

@@ -1,12 +1,14 @@
 // user.prisma
 model User {
-  id    String @id @unique @default(uuid())
+  id    String @id @default(uuid())
   name  String
   email String @unique
   password String
   role UserRole @default(student)
   profile_picture String?
   created_at DateTime @default(now())
+
+  instructed_courses Course[] @relation(name: "instructed")
 
   @@map("users")
 }
