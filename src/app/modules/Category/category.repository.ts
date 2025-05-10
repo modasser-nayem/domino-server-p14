@@ -1,4 +1,5 @@
 import prisma from "../../db/connector";
+import AppError from "../../errors/AppError";
 import { TAddCategory, TUpdateCategory } from "./category.interface";
 
 export class CategoryRepository {
@@ -21,19 +22,35 @@ export class CategoryRepository {
   }
 
   public static async deleteCategory(payload: { categoryId: string }) {
-    return await prisma.category.delete({ where: { id: payload.categoryId } });
+    const courseExistOnThisCategory = await prisma.course.findFirst({
+      where: { category_id: payload.categoryId },
+      select: { id: true, category_id: true },
+    });
+
+    if (courseExistOnThisCategory) {
+      throw new AppError(
+        400,
+        "Courses are exist on that category, you can't delete it, either update category or course",
+      );
+    }
+    return await prisma.category.delete({
+      where: { id: payload.categoryId },
+    });
   }
 
-  public static async findCategory(payload: {
-    categoryId?: string;
-    name?: string;
-  }) {
-    if (!payload.categoryId && !payload.name) {
-      throw new Error("prismaError: Please provide category id or name");
-    }
+  public static async findCategoryById(id: string) {
+    return await prisma.category.findUnique({
+      where: { id: id },
+    });
+  }
+
+  public static async findCategoryByName(name: string) {
     return await prisma.category.findFirst({
       where: {
-        OR: [{ name: payload.name }, { id: payload.categoryId }],
+        name: {
+          equals: name,
+          mode: "insensitive",
+        },
       },
     });
   }

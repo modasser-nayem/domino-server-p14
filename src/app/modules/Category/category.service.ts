@@ -9,9 +9,9 @@ export class CategoryService {
   }
 
   public async addCategory(payload: { data: TAddCategory }) {
-    const existName = await CategoryRepository.findCategory({
-      name: payload.data.name,
-    });
+    const existName = await CategoryRepository.findCategoryByName(
+      payload.data.name,
+    );
 
     if (existName) {
       throw new AppError(400, "Category name already exist!");
@@ -28,17 +28,13 @@ export class CategoryService {
     categoryId: string;
     data: TUpdateCategory;
   }) {
-    if (
-      !(await CategoryRepository.findCategory({
-        categoryId: payload.categoryId,
-      }))
-    ) {
-      throw new AppError(404, "Invalid category id");
+    if (!(await CategoryRepository.findCategoryById(payload.categoryId))) {
+      throw new AppError(404, "Invalid category ID!");
     }
 
-    const existName = await CategoryRepository.findCategory({
-      name: payload.data.name,
-    });
+    const existName = await CategoryRepository.findCategoryByName(
+      payload.data.name!,
+    );
 
     if (existName && existName.id !== payload.categoryId) {
       throw new AppError(400, "Category name already exist!");
@@ -48,8 +44,8 @@ export class CategoryService {
   }
 
   public async deleteCategory(payload: { categoryId: string }) {
-    if (!(await CategoryRepository.findCategory(payload))) {
-      throw new AppError(404, "Invalid category id");
+    if (!(await CategoryRepository.findCategoryById(payload.categoryId))) {
+      throw new AppError(404, "Invalid category ID!");
     }
 
     return await CategoryRepository.deleteCategory(payload);
