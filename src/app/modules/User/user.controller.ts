@@ -23,18 +23,6 @@ export class UserController {
     });
   }
 
-  // Get all instructor
-  async getAllInstructor(req: Request, res: Response) {
-    const result = await this.userService.getAllInstructor();
-
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: "Successfully retrieved all instructor",
-      data: result,
-    });
-  }
-
   // Get single user
   async getSingleUser(req: Request, res: Response) {
     const result = await this.userService.getSingleUser({
@@ -71,7 +59,7 @@ export class UserController {
     sendResponse(res, {
       statusCode: 200,
       success: true,
-      message: "Successfully update profile information",
+      message: "Profile successfully updated",
       data: result,
     });
   }
