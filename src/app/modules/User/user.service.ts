@@ -11,18 +11,14 @@ export class UserService {
   }
 
   public async getAllUsers(payload: { query: TGetAllUserQuery }) {
-    return await UserRepository.getAllUsers(payload.query);
-  }
-
-  public async getAllInstructor() {
-    return await UserRepository.getAllInstructor();
+    return await UserRepository.getAllUsers(payload);
   }
 
   public async getSingleUser(payload: { userId: string }) {
     const user = await UserRepository.getSingleUser(payload.userId);
 
     if (!user) {
-      throw new AppError(404, "User not found!");
+      throw new AppError(400, "Invalid user ID!");
     }
 
     return user;
@@ -32,9 +28,8 @@ export class UserService {
     const user = await UserRepository.getUserProfile(payload.user.id);
 
     if (!user) {
-      throw new AppError(404, "User not found!");
+      throw new AppError(400, "Invalid user ID!");
     }
-
     return user;
   }
 
@@ -43,15 +38,18 @@ export class UserService {
     data: TUpdateUserProfile;
   }) {
     if (payload.data.email) {
-      // if email already exist without this user
       const existEmail = await AuthRepository.findByEmail(payload.data.email);
 
-      // if email already exist without this user
-      if (existEmail && existEmail.id !== payload.user.id) {
-        throw new AppError(
-          400,
-          "Email already exist, please try another email",
-        );
+      if (existEmail) {
+        // if same user
+        if (existEmail.id === payload.user.id) {
+          throw new AppError(400, "You are already use this email!");
+        } else {
+          throw new AppError(
+            400,
+            "Email already exist, please try another email",
+          );
+        }
       }
     }
 

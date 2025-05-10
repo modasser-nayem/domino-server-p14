@@ -23,12 +23,6 @@ class UserRouter {
       asyncHandler(this.userController.getAllUsers),
     );
 
-    // Get all instructor
-    this.router.get(
-      "/instructors",
-      asyncHandler(this.userController.getAllInstructor),
-    );
-
     // Get My Profile
     this.router.get(
       "/profile",
@@ -37,7 +31,11 @@ class UserRouter {
     );
 
     // Get single user
-    this.router.get("/:id", asyncHandler(this.userController.getSingleUser));
+    this.router.get(
+      "/:id",
+      authMiddleware("admin"),
+      asyncHandler(this.userController.getSingleUser),
+    );
 
     // Update my profile
     this.router.put(
