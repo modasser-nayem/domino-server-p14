@@ -5,13 +5,14 @@ export type TCourseDTO = {
   id: string;
   title: string;
   thumbnail: string;
+  category: string;
   price: number;
   status: string;
-  created_at: Date;
-  updated_at: Date;
   total_lessons: number;
   total_modules: number;
-  category: string;
+  total_enroll: number;
+  updated_at: Date;
+  created_at: Date;
 };
 
 export type TCourseDetailsDTO = TCourseDTO & {
