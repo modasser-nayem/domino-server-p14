@@ -1,4 +1,5 @@
 import AppError from "../../errors/AppError";
+import { PaginationQuery } from "../../types/pagination";
 import { bindAllMethods } from "../../utils/bindmethod";
 import {
   TAssignCourseInstructor,
@@ -26,8 +27,24 @@ export class CourseService {
   }
 
   // get all course
-  public async getAllCourses() {
-    return await CourseRepository.getAllCourses();
+  public async getAllCourse(payload: { query: PaginationQuery }) {
+    return await CourseRepository.getAllCourse(payload);
+  }
+
+  // get student enrolled courses
+  public async getStudentEnrolledCourses(payload: {
+    studentId: string;
+    query: PaginationQuery;
+  }) {
+    return await CourseRepository.getStudentEnrolledCourses(payload);
+  }
+
+  // get instructor assign courses
+  public async getInstructorAssignCourses(payload: {
+    instructorId: string;
+    query: PaginationQuery;
+  }) {
+    return await CourseRepository.getInstructorAssignCourses(payload);
   }
 
   // get course details

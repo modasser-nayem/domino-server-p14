@@ -25,7 +25,21 @@ class CourseRouter {
     );
 
     // Get Courses
-    this.router.get("/", asyncHandler(this.courseController.getAllCourses));
+    this.router.get("/", asyncHandler(this.courseController.getAllCourse));
+
+    // Get student enrolled courses
+    this.router.get(
+      "/student",
+      authMiddleware("student"),
+      asyncHandler(this.courseController.getStudentEnrolledCourses),
+    );
+
+    // Get instructor assign courses
+    this.router.get(
+      "/instructor",
+      authMiddleware("instructor"),
+      asyncHandler(this.courseController.getInstructorAssignCourses),
+    );
 
     // Get Course Details
     this.router.get(

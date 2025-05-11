@@ -22,9 +22,39 @@ export class CourseController {
     });
   }
 
-  // get all courses
-  async getAllCourses(req: Request, res: Response) {
-    const result = await this.courseService.getAllCourses();
+  // get all course
+  async getAllCourse(req: Request, res: Response) {
+    const result = await this.courseService.getAllCourse({ query: req.query });
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Successfully retrieved courses",
+      data: result,
+    });
+  }
+
+  // get student enrolled courses
+  async getStudentEnrolledCourses(req: Request, res: Response) {
+    const result = await this.courseService.getStudentEnrolledCourses({
+      studentId: req.user.id,
+      query: req.query,
+    });
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Successfully retrieved courses",
+      data: result,
+    });
+  }
+
+  // get instructor assign course
+  async getInstructorAssignCourses(req: Request, res: Response) {
+    const result = await this.courseService.getInstructorAssignCourses({
+      instructorId: req.user.id,
+      query: req.query,
+    });
 
     sendResponse(res, {
       statusCode: 200,
