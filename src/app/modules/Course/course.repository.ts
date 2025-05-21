@@ -335,7 +335,7 @@ export class CourseRepository {
 
   // find category by id
   public static async findCategoryById(id: string) {
-    return await prisma.category.findFirst({
+    return await prisma.category.findUnique({
       where: {
         id,
       },
@@ -344,7 +344,7 @@ export class CourseRepository {
 
   // find instructor by id
   public static async findInstructor(id: string) {
-    return await prisma.user.findFirst({
+    return await prisma.user.findUnique({
       where: {
         id,
         role: "instructor",

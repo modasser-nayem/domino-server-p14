@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { TMetaData } from "../types/global.types";
+import { TMetaData } from "../types/pagination";
 
 type TSendResponseData = {
   statusCode: number;
