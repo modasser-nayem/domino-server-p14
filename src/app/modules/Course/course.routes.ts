@@ -5,13 +5,15 @@ import requestValidate from "../../middlewares/requestValidation";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { CourseController } from "./course.controller";
 import { courseSchemaValidation } from "./course.validation";
+import { CourseService } from "./course.service";
 
-class CourseRouter {
+const courseService = new CourseService();
+const courseController = new CourseController(courseService);
+
+export class CourseRouter {
   public router: express.Router;
-  private courseController: CourseController;
-  constructor() {
+  constructor(private controller: CourseController) {
     this.router = express.Router();
-    this.courseController = new CourseController();
     this.initRoutes();
   }
 
@@ -21,38 +23,35 @@ class CourseRouter {
       "/",
       authMiddleware("admin"),
       requestValidate(courseSchemaValidation.createCourse),
-      asyncHandler(this.courseController.createCourse),
+      asyncHandler(this.controller.createCourse),
     );
 
     // Get Courses
-    this.router.get("/", asyncHandler(this.courseController.getAllCourse));
+    this.router.get("/", asyncHandler(this.controller.getAllCourse));
 
     // Get student enrolled courses
     this.router.get(
       "/student",
       authMiddleware("student"),
-      asyncHandler(this.courseController.getStudentEnrolledCourses),
+      asyncHandler(this.controller.getStudentEnrolledCourses),
     );
 
     // Get instructor assign courses
     this.router.get(
       "/instructor",
       authMiddleware("instructor"),
-      asyncHandler(this.courseController.getInstructorAssignCourses),
+      asyncHandler(this.controller.getInstructorAssignCourses),
     );
 
     // Get Course Details
-    this.router.get(
-      "/:id",
-      asyncHandler(this.courseController.getCourseDetails),
-    );
+    this.router.get("/:id", asyncHandler(this.controller.getCourseDetails));
 
     // Update Course
     this.router.put(
       "/:id",
       authMiddleware("admin"),
       requestValidate(courseSchemaValidation.updateCourse),
-      asyncHandler(this.courseController.updateCourse),
+      asyncHandler(this.controller.updateCourse),
     );
 
     // Update course status
@@ -60,7 +59,7 @@ class CourseRouter {
       "/status/:id",
       authMiddleware("admin"),
       requestValidate(courseSchemaValidation.updateCourseStatus),
-      asyncHandler(this.courseController.updateCourseStatus),
+      asyncHandler(this.controller.updateCourseStatus),
     );
 
     // Assign course instructor
@@ -68,17 +67,17 @@ class CourseRouter {
       "/assign/:id",
       authMiddleware("admin"),
       requestValidate(courseSchemaValidation.assignCourseInstructor),
-      asyncHandler(this.courseController.assignCourseInstructor),
+      asyncHandler(this.controller.assignCourseInstructor),
     );
 
     // Delete course
     this.router.delete(
       "/:id",
       authMiddleware("admin"),
-      asyncHandler(this.courseController.deleteCourse),
+      asyncHandler(this.controller.deleteCourse),
     );
   }
 }
 
-const courseRoutes = new CourseRouter().router;
+const courseRoutes = new CourseRouter(courseController).router;
 export default courseRoutes;

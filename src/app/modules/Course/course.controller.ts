@@ -4,9 +4,8 @@ import sendResponse from "../../utils/sendResponse";
 import { CourseService } from "./course.service";
 
 export class CourseController {
-  private courseService: CourseService;
-  constructor() {
-    this.courseService = new CourseService();
+  constructor(private courseService: CourseService) {
+    this.courseService = courseService;
     bindAllMethods(this);
   }
 
