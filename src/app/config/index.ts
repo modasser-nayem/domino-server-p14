@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 import path from "path";
 import { requireEnv, requireNumberEnv } from "../utils/validateEnv";
 
-dotenv.config({ path: path.join(process.cwd(), ".env") });
+const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env";
+dotenv.config({ path: path.join(process.cwd(), envFile) });
 
 export default {
   NODE_ENV: requireEnv("NODE_ENV"),
