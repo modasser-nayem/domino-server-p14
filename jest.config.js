@@ -7,4 +7,5 @@ module.exports = {
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.ts", "!src/server.ts"],
   verbose: true,
+  cache: true,
 };

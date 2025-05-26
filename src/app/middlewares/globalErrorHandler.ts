@@ -9,10 +9,9 @@ import { Prisma } from "@prisma/client";
 
 export const globalErrorHandler: ErrorRequestHandler = (
   err,
-  req,
+  _req,
   res,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next,
+  _next,
 ) => {
   let message = err.message || "Something went wrong!";
   let statusCode = err.statusCode || 500;
