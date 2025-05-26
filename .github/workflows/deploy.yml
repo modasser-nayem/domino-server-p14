@@ -1,0 +1,61 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Copy .env.test for testing
+        run: cp .env.test .env
+
+      - name: Run tests
+        run: npm run test
+        env:
+          NODE_ENV: test
+
+      - name: Build app
+        run: npm run build
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_IMAGE_NAME }} .
+
+      #  Push to DockerHub
+      - name: Login to DockerHub
+        if: ${{ secrets.DOCKER_USERNAME }}
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        if: ${{ secrets.DOCKER_USERNAME }}
+        run: docker push ${{ secrets.DOCKER_IMAGE_NAME }}
+
+      - name: Discord Notify Success
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d '{"content":"✅ CI/CD Success: Docker image for `${{ github.repository }}` built and pushed to DockerHub successfully."}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Discord Notify Failure
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d '{"content":"❌ CI/CD Failed: There was an error during Docker build/push for `${{ github.repository }}`. Please check the GitHub Actions logs."}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
