@@ -13,10 +13,10 @@ RUN npx prisma generate
 RUN npm run build
 
 # Make entrypoint executable
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 5000
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD [ "npm", "start" ]
